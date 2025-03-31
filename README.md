@@ -145,6 +145,151 @@ this will take your dataset and return a featurised dataset in the file specifie
 
 this will return a featurised dataset in the data/ successfully.
 
+### Build an ML model
+
+- XGBoost for model training because it handles structured data well and optimized for performance.
+- scikit-learn provides utilities for preprocesing, evaluation and saving the model.
+
+#### Steps to build a model
+
+1- Install/confirm required packages, xgboost, sklearn, matpotlib.
+
+`pip install xgboost scikit-learn matpotlib` `pip list`
+
+2- Merged featurised data and raw data to have the y column in the dataframe, this is because of the featuriser that was used
+
+```
+raw_df = pd.read_csv("../data/bioavailabity.csv")
+featurized_df = pd.read_csv("../data/featurised_bioavailability.csv")
+merged_df = featurized_df.merge(original_df[["Drug_ID", "Y"]], left_on="key", right_on="Drug_ID")
+merged_df = merged_df.drop(columns=["key", "input", "Drug_ID"])
+merged_df.to_csv("../data/merged_ft_bioavailability.csv", index=False)
+```
+the dataframe is now features and target column ready to be use for training
+
+3- Seperate data into x and y
+
+```
+x = merged_df.drop(columns=["Y"])
+y = merged_df["Y"]
+```
+
+4- Split data into training and testing
+
+```
+from sklearn.model_selection import train_test_split
+
+x_train, x_test, y_train, y_test = train_test_split(
+    x, y, test_size=0.2, random_state=42, stratify=y
+)
+```
+
+5- Create model and train
+
+```
+import xgboost as xgb  
+
+model = xgb.XGBClassifier(
+    learning_rate=0.2,
+    n_estimators=100,
+    max_depth=6,
+    scale_pos_weight=2,
+    random_state=42  
+)  
+
+model.fit(x_train, y_train)
+```
+
+6- Making predictions
+
+```
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score  
+
+y_pred_prob = model.predict_proba(x_test)[:, 1]  
+
+threshold = 0.9
+y_pred_custom = (y_pred_prob >= threshold).astype(int)
+```
+
+7- Evaluating the model
+
+```
+accuracy = accuracy_score(y_test, y_pred_custom)
+precision = precision_score(y_test, y_pred_custom)
+recall = recall_score(y_test, y_pred_custom)
+f1 = f1_score(y_test, y_pred_custom)
+auc = roc_auc_score(y_test, y_pred_prob)
+
+print(f"Accuracy: {accuracy:.4f}")
+print(f"Precision: {precision:.4f}")
+print(f"Recall: {recall:.4f}")
+print(f"F1 Score: {f1:.4f}")
+print(f"AUC Score: {auc:.4f}")
+```
+8- Visualizing results with matplotlib
+
+- Confusion matrix
+
+```
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.metrics import confusion_matrix
+
+cm = confusion_matrix(y_test, y_pred_custom)
+
+plt.figure(figsize=(6, 4))
+sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", xticklabels=["Predicted 0", "Predicted 1"], yticklabels=["Actual 0", "Actual 1"])
+plt.title("Confusion Matrix")
+plt.show()
+```
+
+- ROC curve
+
+```
+from sklearn.metrics import roc_curve
+
+fpr, tpr, _ = roc_curve(y_test, y_pred_prob)
+plt.plot(fpr, tpr, label="ROC Curve")
+plt.plot([0, 1], [0, 1], linestyle="--", color="gray") 
+plt.xlabel("False Positive Rate")
+plt.ylabel("True Positive Rate")
+plt.title("ROC Curve")
+plt.legend()
+plt.show()
+```
+
+- Precision-recall curve
+
+```
+from sklearn.metrics import precision_recall_curve
+
+precision, recall, _ = precision_recall_curve(y_test, y_pred_prob)
+plt.plot(recall, precision, label="Precision-Recall Curve")
+plt.xlabel("Recall")
+plt.ylabel("Precision")
+plt.title("Precision-Recall Curve")
+plt.legend()
+plt.show()
+```
+
+9- Save the trained the model
+
+```
+import joblib
+joblib.dump(model, "../models/bioavailability.pkl")
+```
+
+### Model hypothesis
+
+- After training the XGBoost model, achieved an accuracy of 79.69%, precision of 83.96%, and recall of 90.82%.
+- The ROC-AUC score was 0.7078, which is close to TDC benchmark models reporting around 0.706 +- 0.031 on similar tasks.
+- 
+indicating moderate discriminatory power. The confusion matrix showed that the model struggled slightly with false negatives, possibly due to the imbalance in the dataset (more negative samples than positive). The use of Ersilia Compound Embeddings likely helped capture relevant chemical and bioactivity information, but the limited size of the dataset may have restricted the model's performance. Compared to similar tasks in TDC Benchmarks, where models typically achieve around 75% ROC-AUC, our model performed reasonably well.
+
+
+
+
+
 
 
 
