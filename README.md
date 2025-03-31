@@ -3,7 +3,7 @@
 ### Project steps:
 1. [Download a dataset](https://github.com/AzeematRaji/ersilia-outreachy/edit/main/README.md#download-a-dataset)
 1. [Featurise the data](https://github.com/AzeematRaji/ersilia-outreachy/edit/main/README.md#featurising-the-data)
-1. Build an ML model
+1. [Build an ML model](https://github.com/AzeematRaji/ersilia-outreachy/edit/main/README.md#build-an-ml-model)
 
 Setting the environment:
 
@@ -279,13 +279,28 @@ import joblib
 joblib.dump(model, "../models/bioavailability.pkl")
 ```
 
+10- Images of evaluation metrics can be found /results
+
 ### Model hypothesis
 
-- After training the XGBoost model, achieved an accuracy of 79.69%, precision of 83.96%, and recall of 90.82%.
-- The ROC-AUC score was 0.7078, which is close to TDC benchmark models reporting around 0.706 +- 0.031 on similar tasks.
-- 
-indicating moderate discriminatory power. The confusion matrix showed that the model struggled slightly with false negatives, possibly due to the imbalance in the dataset (more negative samples than positive). The use of Ersilia Compound Embeddings likely helped capture relevant chemical and bioactivity information, but the limited size of the dataset may have restricted the model's performance. Compared to similar tasks in TDC Benchmarks, where models typically achieve around 75% ROC-AUC, our model performed reasonably well.
+After training the XGBoost model, it achieved:
 
+Accuracy: 79.69%
+
+Precision: 83.96%
+
+Recall: 90.82%
+
+ROC-AUC Score: 0.7078
+
+This ROC-AUC score is close to the TDC benchmark, which reports around 0.706 ± 0.031 for similar tasks.
+
+To address class imbalance, the following adjustments were made:
+- Stratified sampling while splitting the dataset
+- Increased scale_pos_weight to 2
+- Adjusted the decision threshold to 0.9
+
+The confusion matrix indicated that the model still struggled slightly with false positives, likely due to the imbalance in the dataset. However, compared to similar tasks in TDC benchmarks, where models typically achieve ~70% ROC-AUC, our model performed reasonably well but could be improved.
 
 
 
