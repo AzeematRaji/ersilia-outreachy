@@ -281,6 +281,25 @@ joblib.dump(model, "../models/bioavailability.pkl")
 
 10- Images of evaluation metrics can be found /results, also code preview can be in the /notebooks//bioavailability_train.ipynb 
 
+11- For automation and reproducibility, model can be built, trained and predicted by running `bioavailabilty_train.py` found in the /scripts:
+
+`python bioavailabilty_train.py`
+
+### Using the model later
+
+To use the model, the saved model has to be loaded;
+
+```
+import joblib
+model = joblib.load("../models/bioavailability.pkl")
+```
+
+Make predictions
+
+`y_pred = model.predict(x_test)`
+
+
+
 ### Model hypothesis
 
 After training the XGBoost model, it achieved:
