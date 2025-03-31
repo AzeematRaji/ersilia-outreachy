@@ -279,7 +279,7 @@ import joblib
 joblib.dump(model, "../models/bioavailability.pkl")
 ```
 
-10- Images of evaluation metrics can be found /results
+10- Images of evaluation metrics can be found /results, also code preview can be in the /notebooks//bioavailability_train.ipynb 
 
 ### Model hypothesis
 
