@@ -39,7 +39,7 @@ install with pip:
 
 `pip install -e .`
 
-confirm erisilia:
+confirm Erisilia:
 
 `ersilia --help`
 
@@ -63,7 +63,7 @@ __Source__: TDC (Therapeutics Data Commons), a collection of curated datasets an
 
 #### Steps to downloading dataset from TDC
 
-1- To retreive dataset from TDC, install its python package:
+1- To retrieve dataset from TDC, install its python package:
 
 `pip install pytdc` normal installation
 
@@ -85,7 +85,7 @@ load the dataset in pandas Dataframe for handling structured data in python:
 
   `df = data.get_data()`
 
-save dataset in .csv format in data/ to keep it organized, .tab saves by default in the working directory
+save dataset in .csv format in data/ to keep it organized, .tab format saves by default in the working directory
 ```
 df.to_csv("../data/bioavailability.csv", index=False)
 ```
@@ -136,7 +136,7 @@ Since the featuriser is a representation model from ersilia hub, and previously 
 
 3- run, passing the saved dataset as the input, specify the output in a file:
 
-`ersilia run -i ./data/bioavailabilty.csv -o ./data/featurised_bioavailability.csv`
+`ersilia run -i ./data/bioavailability.csv -o ./data/featurised_bioavailability.csv`
 
 this will take your dataset and return a featurised dataset in the file specified.
 
@@ -161,7 +161,7 @@ this will return a featurised dataset in the data/ successfully.
 ```
 raw_df = pd.read_csv("../data/bioavailabity.csv")
 featurized_df = pd.read_csv("../data/featurised_bioavailability.csv")
-merged_df = featurized_df.merge(original_df[["Drug_ID", "Y"]], left_on="key", right_on="Drug_ID")
+merged_df = featurized_df.merge(raw_df[["Drug_ID", "Y"]], left_on="key", right_on="Drug_ID")
 merged_df = merged_df.drop(columns=["key", "input", "Drug_ID"])
 merged_df.to_csv("../data/merged_ft_bioavailability.csv", index=False)
 ```
@@ -321,7 +321,69 @@ To address class imbalance, the following adjustments were made:
 
 The confusion matrix indicated that the model still struggled slightly with false positives, likely due to the imbalance in the dataset. However, compared to similar tasks in TDC benchmarks, where models typically achieve ~70% ROC-AUC, our model performed reasonably well but could be improved.
 
+### Extra Model Validation
 
+#### Tried a different featurisation
+_Morgan counts fingerprints_ (eos5axz) as [above](https://github.com/AzeematRaji/ersilia-outreachy/edit/main/README.md#featurising-the-data)
+
+#### Test other ML architectures using the fingerprints descriptors:
+
+- Random Forest
+- svm (Support Vector Machine)
+
+Following the steps to [training](https://github.com/AzeematRaji/ersilia-outreachy/edit/main/README.md#steps-to-build-a-model) a model
+
+Alternative Models: Random Forest & SVM:
+```
+from sklearn.ensemble import RandomForestClassifier
+import joblib
+
+rf_model = RandomForestClassifier(n_estimators=100, random_state=42)
+rf_model.fit(x_train, y_train)
+joblib.dump(rf_model, "../models/random_forest_bioavailability.pkl")
+
+y_pred_rf = rf_model.predict(x_test)
+y_pred_rf_prob = rf_model.predict_proba(x_test)[:, 1]
+```
+```
+from sklearn.svm import SVC
+svm_model = SVC(probability=True, kernel='rbf', random_state=42)
+svm_model.fit(x_train, y_train)
+
+joblib.dump(svm_model, "../models/svm_bioavailability.pkl")
+
+y_pred_svm = svm_model.predict(x_test)
+y_pred_svm_prob = svm_model.predict_proba(x_test)[:, 1]
+```
+
+#### Evaluating how each model performed and the AUROC score:
+
+_xgboost model trained with ersilia embeddings_
+
+AUROC score = 0.7078 and model performance is generally good.
+
+_Random forest model trained with fingerprints descriptors_
+
+AUROC score = 0.7162 and model classification is not good, misclassified more non-bioavailable compounds as bioavailable.
+_svm model trained with fingerprints descriptor_
+
+AUROC score = 0.7378 but model classification is poor, misclassified more non-bioavailable compounds as bioavailable and vice versa.
+
+Confusion matrix and visualization results can be found in /notebooks/model_validation.ipynb
+
+#### Apply models to public dataset
+
+Downloaded a new drug molecules dataset _HIA_Hou_ for prediction using my models because both datasets are for an ADME task:
+
+_xgboost model trained with ersilia embeddings_ : AUC Score: 0.7975 but classification is fairly better when compared to other two models
+
+_Random forest model trained with fingerprints descriptors_ : AUC Score: 0.8228, model classification is suboptimal, as it misclassified many non-bioavailable compounds as bioavailable.
+
+_svm model trained with fingerprints descriptor_ : AUC Score: 0.8688 but model exhibited poor classification performance.
+
+#### Overall performance
+
+XGBoost model trained with descriptors using ersilia compound embeddings performed better considering the AUROC score and how well the model classified bioavailables and non bioavailables.
 
 
 
