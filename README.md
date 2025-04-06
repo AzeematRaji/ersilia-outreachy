@@ -2,26 +2,24 @@
 A ML model that predicts whether a drug molecule is bioavailable or non-bioavailable using XGBoost and Ersilia compound embeddings.
 
 ### Table of Contents
-1. [Project Description]()
-1. [Setting the Environment]()
-2. [Project Structure]()
+1. [Project Description](https://github.com/AzeematRaji/ersilia-outreachy/edit/main/README.md#project-description)
+1. [Setting the Environment](https://github.com/AzeematRaji/ersilia-outreachy/edit/main/README.md#setting-the-environment)
+2. [Project Structure](https://github.com/AzeematRaji/ersilia-outreachy/edit/main/README.md#project-structure)
 3. [Download a dataset](https://github.com/AzeematRaji/ersilia-outreachy/edit/main/README.md#download-a-dataset)
 4. [Featurise the data](https://github.com/AzeematRaji/ersilia-outreachy/edit/main/README.md#featurising-the-data)
-5. [Training the model](https://github.com/AzeematRaji/ersilia-outreachy/edit/main/README.md#build-an-ml-model)
-6. [Model Evaluation]()
-7. [Visualizing the Results]()
-8. [Model Hypothesis]()
-9. [Using the Model Later]()
-10. [Area of Improvement]()
-11. [Extra Model Validation]()
-12. [Apply Model to Public Dataset]()
-13. [Conclusion]()
-### Project steps:
-1. [Download a dataset](https://github.com/AzeematRaji/ersilia-outreachy/edit/main/README.md#download-a-dataset)
-1. [Featurise the data](https://github.com/AzeematRaji/ersilia-outreachy/edit/main/README.md#featurising-the-data)
-1. [Build an ML model](https://github.com/AzeematRaji/ersilia-outreachy/edit/main/README.md#build-an-ml-model)
+5. [Training the model](https://github.com/AzeematRaji/ersilia-outreachy/edit/main/README.md#training-the-model)
+6. [Model Evaluation](https://github.com/AzeematRaji/ersilia-outreachy/edit/main/README.md#evaluating-the-model)
+8. [Model Summary](https://github.com/AzeematRaji/ersilia-outreachy/edit/main/README.md#model-summary)
+9. [Using the Model Later](https://github.com/AzeematRaji/ersilia-outreachy/edit/main/README.md#using-the-model-later)
+11. [Extra Model Validation](https://github.com/AzeematRaji/ersilia-outreachy/edit/main/README.md#extra-model-validation)
+12. [Apply Model to Public Dataset](https://github.com/AzeematRaji/ersilia-outreachy/edit/main/README.md#apply-models-to-public-dataset)
+13. [Conclusion](https://github.com/AzeematRaji/ersilia-outreachy/edit/main/README.md#conclusion)
 
-Setting the environment:
+### Project Description
+
+This project aims to classify drug molecules based on their oral bioavailability which is a key property in drug development. The workflow leverages the Ersilia Model for generating compound embeddings as molecular features, and trains an XGBoost classifier for prediction.
+
+### Setting the Environment:
 
 #### Prerequisites
 - linux OS
@@ -59,6 +57,32 @@ confirm Erisilia:
 
 `ersilia --help`
 
+### Project Structure
+
+``` text
+├── data/                      
+│   ├── bioavailability.csv
+│   └── featurised_bioavailability.csv
+├── models/                       
+│   ├── bioavailability.pkl
+│   ├── random_forest_bioavailability.pkl
+│   └── svm_bioavailability.pkl
+├── notebooks/                     
+│   ├── bio_data_handling.ipynb
+│   ├── bioavailability_train.ipynb
+│   └── model_validation.ipynb
+├── results/                    
+│   ├── confusion_matrix.png
+│   ├── precision_recall_curve.png
+│   └── roc_curve.png
+├── scripts/                     
+│   ├── bio_data_featurising.py
+│   ├── bio_data_handling.py
+│   └── bioavailability.py
+└── README.md
+```
+
+
 ### Download a dataset
 
 #### Background of Data
@@ -66,7 +90,7 @@ confirm Erisilia:
 __Dataset__: _Bioavailability, Ma et al._
 
 Oral bioavailability is the fraction of an orally administered drug that reaches site of action in an unchanged form.
-It is influenced by factors like absorption, metabolism and solubility
+It is influenced by factors like absorption, metabolism and solubility.
 
 __Task__: Given a drug ("SMILES"), predict the activity of bioavailability in Binary (0 or 1)
 
@@ -79,18 +103,33 @@ __Source__: TDC (Therapeutics Data Commons), a collection of curated datasets an
 
 #### Steps to downloading dataset from TDC
 
-1- To retrieve dataset from TDC, install its python package:
+1- To retrieve dataset from TDC, install its python package.
 
-`pip install pytdc` normal installation
+Install the package with:
 
-`pip install "pytdc" "aiobotocore>=2.5,<3" "boto3>=1.37,<2" "botocore>=1.37,<2" "s3transfer>=0.5,<1"` to avoid any dependencies conflict
+`pip install pytdc` 
 
-2- Using Notebook for an interactive session, can be found in notebooks/
+To avoid potential dependency conflicts, use:
 
-Set up notebook:
-- install jupyter notebook via conda `conda install -c conda-forge notebook` or
-- install jupyter notebook via pip `pip install notebook`
-- launch notebook from your root/ `jupyter notebook`
+`pip install "pytdc" "aiobotocore>=2.5,<3" "boto3>=1.37,<2" "botocore>=1.37,<2" "s3transfer>=0.5,<1"` 
+
+2- Use Jupyter Notebook for Interactive Exploration
+
+Check the notebook: notebooks/bio_data_handling.ipynb
+
+Set up Jupyter Notebook if not installed already:
+```
+# using conda
+conda install -c conda-forge notebook
+
+# using pip
+pip install notebook
+```
+Launch Jupyter:
+
+`jupyter notebook`
+
+Then run the following code to download and explore the dataset
 
 retrieve the dataset from TDC:
 ```
@@ -118,19 +157,24 @@ explore features and basic info about dataset
 
 ```
 split = data.get_split()
-split.keys()  # splits are available
+split.keys()  # check splits available
 ```
 
-save notebook `data_handling.ipynb` in the notebooks/
+Save this notebook as bio_data_handling.ipynb in the notebooks/ directory.
 
-3- Using python scripts for automation and easily reproducible, this can be found in scripts/ 
+3- Use Python Script for Automation
 
-to download, load and save dataset, the script can easily be run using:
+To make workflow reproducible, use the script at: scripts/data_handling.py.
+
+To run it:
 
 `python ./scripts/data_handling.py`
 
+This script will:
 
-Dataset has been successfully downloaded, loaded and saved into the data/, notebook saved in the notebooks/ and script saved in scripts/.
+Download and save the dataset to data/
+
+Keep workflow easily reusable and automated
 
 ### Featurising the data
 
@@ -161,36 +205,52 @@ this will take your dataset and return a featurised dataset in the file specifie
 
 this will return a featurised dataset in the data/ successfully.
 
-### Build an ML model
+### Training the model
 
-- XGBoost for model training because it handles structured data well and optimized for performance.
-- scikit-learn provides utilities for preprocesing, evaluation and saving the model.
+For training the model, use XGBoost due to its optimization for performance with structured data. Additionally, scikit-learn is used for preprocessing, evaluation, and saving the model.
 
-#### Steps to build a model
+#### Steps to train a model
 
-1- Install/confirm required packages, xgboost, sklearn, matpotlib.
+1-  Install the Required Packages
 
-`pip install xgboost scikit-learn matpotlib` `pip list`
+Ensure all required dependencies installed:
 
-2- Merged featurised data and raw data to have the y column in the dataframe, this is because of the featuriser that was used
+`pip install xgboost scikit-learn matpotlib` 
+
+confirm installation with:
+
+`pip list`
+
+2-  Merge the Featurised Data with Raw Data
+
+Combine the featurised and raw data to include the target column (Y) in the dataset. The following code does that:
 
 ```
+# load raw and featurised data
 raw_df = pd.read_csv("../data/bioavailabity.csv")
 featurized_df = pd.read_csv("../data/featurised_bioavailability.csv")
+
+# merge both data
 merged_df = featurized_df.merge(raw_df[["Drug_ID", "Y"]], left_on="key", right_on="Drug_ID")
+
+# drop unneccessary columns
 merged_df = merged_df.drop(columns=["key", "input", "Drug_ID"])
 merged_df.to_csv("../data/merged_ft_bioavailability.csv", index=False)
 ```
-the dataframe is now features and target column ready to be use for training
+Now, the dataframe will have both features and the target column (Y), making it ready for training.
 
-3- Seperate data into x and y
+3- Separate Features and Target
+
+Split the data into features (x) and target (y):
 
 ```
 x = merged_df.drop(columns=["Y"])
 y = merged_df["Y"]
 ```
 
-4- Split data into training and testing
+4- Split data into training and testing set
+
+Use scikit-learn train_test_split to split the data into training and testing sets:
 
 ```
 from sklearn.model_selection import train_test_split
@@ -215,21 +275,26 @@ model = xgb.XGBClassifier(
 
 model.fit(x_train, y_train)
 ```
+This will train the model on the data and prepare it for predictions.
 
-6- Making predictions
+### Evaluating the model
+
+Once the model is trained, it’s crucial to evaluate its performance using different metrics. Accuracy, precision, recall, F1 score, and AUC is used. Also, visualized the results with a confusion matrix, ROC curve, and precision-recall curve.
+
+#### Steps to evaluate the model
+
+1. Model Evaluation Metrics
 
 ```
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score  
 
+# predict model performance
 y_pred_prob = model.predict_proba(x_test)[:, 1]  
 
 threshold = 0.9
 y_pred_custom = (y_pred_prob >= threshold).astype(int)
-```
 
-7- Evaluating the model
-
-```
+# calculate metrics
 accuracy = accuracy_score(y_test, y_pred_custom)
 precision = precision_score(y_test, y_pred_custom)
 recall = recall_score(y_test, y_pred_custom)
@@ -242,9 +307,10 @@ print(f"Recall: {recall:.4f}")
 print(f"F1 Score: {f1:.4f}")
 print(f"AUC Score: {auc:.4f}")
 ```
-8- Visualizing results with matplotlib
 
-- Confusion matrix
+2. Visualizing results with matplotlib and seaborn
+
+- Confusion matrix: To evaluate the true vs. predicted classes.
 
 ```
 import matplotlib.pyplot as plt
@@ -259,7 +325,7 @@ plt.title("Confusion Matrix")
 plt.show()
 ```
 
-- ROC curve
+- ROC curve: To evaluate the performance at various thresholds.
 
 ```
 from sklearn.metrics import roc_curve
@@ -274,7 +340,7 @@ plt.legend()
 plt.show()
 ```
 
-- Precision-recall curve
+- Precision-recall curve: To evaluate precision vs. recall at various thresholds.
 
 ```
 from sklearn.metrics import precision_recall_curve
@@ -288,35 +354,26 @@ plt.legend()
 plt.show()
 ```
 
-9- Save the trained the model
+3. Save the trained the model
 
 ```
 import joblib
 joblib.dump(model, "../models/bioavailability.pkl")
 ```
 
-10- Images of evaluation metrics can be found /results, also code preview can be in the /notebooks//bioavailability_train.ipynb 
+4. Saving Evaluation Metrics as Images
 
-11- For automation and reproducibility, model can be built, trained and predicted by running `bioavailabilty_train.py` found in the /scripts:
+Visualizations of the confusion matrix, ROC curve, and precision-recall curve are saved in the results/ folder. Also code preview can be in the /notebooks//bioavailability_train.ipynb 
 
-`python bioavailabilty_train.py`
+5. Automate the Process
 
-### Using the model later
+To automate model training, evaluation, and prediction, run the following script:
 
-To use the model, the saved model has to be loaded;
+`python ./scripts/bioavailability_train.py`
 
-```
-import joblib
-model = joblib.load("../models/bioavailability.pkl")
-```
+This script will build, train, and predict the bioavailability model automatically, making it reproducible and easier to run in the future.
 
-Make predictions
-
-`y_pred = model.predict(x_test)`
-
-
-
-### Model hypothesis
+### Model Summary
 
 After training the XGBoost model, it achieved:
 
@@ -335,7 +392,23 @@ To address class imbalance, the following adjustments were made:
 - Increased scale_pos_weight to 2
 - Adjusted the decision threshold to 0.9
 
-The confusion matrix indicated that the model still struggled slightly with false positives, likely due to the imbalance in the dataset. However, compared to similar tasks in TDC benchmarks, where models typically achieve ~70% ROC-AUC, our model performed reasonably well but could be improved.
+#### Improvement:
+- **False Positive Bioavailable Predictions**: The confusion matrix indicated the model struggled with false bioavailable. This could be due to class imbalance, which was handled with methods like stratified sampling and adjusting the scale_pos_weight.
+- **Threshold Adjustment**: The current threshold of 0.9 led to a good recall but possibly at the cost of precision. Further tuning of the threshold or experimenting with different models may improve performance.
+
+
+### Using the model later
+
+To use the model, the saved model has to be loaded;
+
+```
+import joblib
+model = joblib.load("../models/bioavailability.pkl")
+```
+
+Make predictions
+
+`y_pred = model.predict(x_test)`
 
 ### Extra Model Validation
 
@@ -397,7 +470,7 @@ _Random forest model trained with fingerprints descriptors_ : AUC Score: 0.8228,
 
 _svm model trained with fingerprints descriptor_ : AUC Score: 0.8688 but model exhibited poor classification performance.
 
-#### Overall performance
+### Conclusion
 
 XGBoost model trained with descriptors using ersilia compound embeddings performed better considering the AUROC score and how well the model classified bioavailables and non bioavailables.
 
