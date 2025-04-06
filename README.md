@@ -1,5 +1,21 @@
-## Apply Ersilia Models to a modelling task
+## Bioavailability Prediction Model
+A ML model that predicts whether a drug molecule is bioavailable or non-bioavailable using XGBoost and Ersilia compound embeddings.
 
+### Table of Contents
+1. [Project Description]()
+1. [Setting the Environment]()
+2. [Project Structure]()
+3. [Download a dataset](https://github.com/AzeematRaji/ersilia-outreachy/edit/main/README.md#download-a-dataset)
+4. [Featurise the data](https://github.com/AzeematRaji/ersilia-outreachy/edit/main/README.md#featurising-the-data)
+5. [Training the model](https://github.com/AzeematRaji/ersilia-outreachy/edit/main/README.md#build-an-ml-model)
+6. [Model Evaluation]()
+7. [Visualizing the Results]()
+8. [Model Hypothesis]()
+9. [Using the Model Later]()
+10. [Area of Improvement]()
+11. [Extra Model Validation]()
+12. [Apply Model to Public Dataset]()
+13. [Conclusion]()
 ### Project steps:
 1. [Download a dataset](https://github.com/AzeematRaji/ersilia-outreachy/edit/main/README.md#download-a-dataset)
 1. [Featurise the data](https://github.com/AzeematRaji/ersilia-outreachy/edit/main/README.md#featurising-the-data)
