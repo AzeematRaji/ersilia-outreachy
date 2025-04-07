@@ -1,19 +1,19 @@
 ## Bioavailability Prediction Model
-A ML model that predicts whether a drug molecule is bioavailable or non-bioavailable using XGBoost and Ersilia compound embeddings.
+A ML model that predicts the bioavailability of a drug molecule using XGBoost and Ersilia compound embeddings.
 
 ### Table of Contents
-1. [Project Description](https://github.com/AzeematRaji/ersilia-outreachy/edit/main/README.md#project-description)
-1. [Setting the Environment](https://github.com/AzeematRaji/ersilia-outreachy/edit/main/README.md#setting-the-environment)
-2. [Project Structure](https://github.com/AzeematRaji/ersilia-outreachy/edit/main/README.md#project-structure)
-3. [Download a dataset](https://github.com/AzeematRaji/ersilia-outreachy/edit/main/README.md#download-a-dataset)
-4. [Featurise the data](https://github.com/AzeematRaji/ersilia-outreachy/edit/main/README.md#featurising-the-data)
-5. [Training the model](https://github.com/AzeematRaji/ersilia-outreachy/edit/main/README.md#training-the-model)
-6. [Model Evaluation](https://github.com/AzeematRaji/ersilia-outreachy/edit/main/README.md#evaluating-the-model)
-8. [Model Summary](https://github.com/AzeematRaji/ersilia-outreachy/edit/main/README.md#model-summary)
-9. [Using the Model Later](https://github.com/AzeematRaji/ersilia-outreachy/edit/main/README.md#using-the-model-later)
-11. [Extra Model Validation](https://github.com/AzeematRaji/ersilia-outreachy/edit/main/README.md#extra-model-validation)
-12. [Apply Model to Public Dataset](https://github.com/AzeematRaji/ersilia-outreachy/edit/main/README.md#apply-models-to-public-dataset)
-13. [Conclusion](https://github.com/AzeematRaji/ersilia-outreachy/edit/main/README.md#conclusion)
+1. [Project Description](#project-description)
+2. [Setting the Environment](#setting-the-environment)
+3. [Project Structure](#project-structure)
+4. [Download a Dataset](#download-a-dataset)
+5. [Featurise the Data](#featurise-the-data)
+6. [Training the Model](#training-the-model)
+7. [Model Evaluation](#model-evaluation)
+8. [Model Summary](#model-summary)
+9. [Using the Model Later](#using-the-model-later)
+10. [Extra Model Validation](#extra-model-validation)
+11. [Apply Models to Public Dataset](#apply-models-to-public-dataset)
+12. [Conclusion](#conclusion)
 
 ### Project Description
 
@@ -176,7 +176,7 @@ Download and save the dataset to data/
 
 Keep workflow easily reusable and automated
 
-### Featurising the data
+### Featurise the data
 
 __Featuriser__: _Ersilia Compound Embeddings_ (eos2gw4)
 
@@ -277,7 +277,7 @@ model.fit(x_train, y_train)
 ```
 This will train the model on the data and prepare it for predictions.
 
-### Evaluating the model
+### Model Evaluation
 
 Once the model is trained, it’s crucial to evaluate its performance using different metrics. Accuracy, precision, recall, F1 score, and AUC is used. Also, visualized the results with a confusion matrix, ROC curve, and precision-recall curve.
 
@@ -491,7 +491,7 @@ Although other models like Random Forest and SVM showed higher AUROC scores on d
 
 This project shows that using the right features for drug data, along with strong machine learning models, can improve predictions. It also highlights the importance of looking beyond just accuracy, especially when the data is imbalanced, like in many biomedical tasks.
 
-
+In real world drug development, predicting bioavailability of drug molecules is essential. It helps to determine if a drug will be effective in the body. A model like this helps researchers filter out molecules with poor bioavailability early, saving time, reducing lab costs and testing, and speeding up the discovery of safe, effective medicines.
 
 
 
