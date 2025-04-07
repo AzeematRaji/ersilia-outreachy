@@ -412,15 +412,16 @@ Make predictions
 
 ### Extra Model Validation
 
-#### Tried a different featurisation
-_Morgan counts fingerprints_ (eos5axz) as [above](https://github.com/AzeematRaji/ersilia-outreachy/edit/main/README.md#featurising-the-data)
+To further validate the results and explore improvements:
 
-#### Test other ML architectures using the fingerprints descriptors:
+- Tried a different featurisation:
+Use _Morgan counts fingerprints_ (eos5axz) instead of Ersilia embeddings. Refer to [this](https://github.com/AzeematRaji/ersilia-outreachy/edit/main/README.md#featurising-the-data) for featurisation
 
-- Random Forest
-- svm (Support Vector Machine)
+- Tested other ML architectures using the fingerprints descriptors:
+  - Random Forest
+  - svm (Support Vector Machine)
 
-Following the steps to [training](https://github.com/AzeematRaji/ersilia-outreachy/edit/main/README.md#steps-to-build-a-model) a model
+Following similar steps as used to train the [XGBoost model](https://github.com/AzeematRaji/ersilia-outreachy/edit/main/README.md#steps-to-build-a-model) 
 
 Alternative Models: Random Forest & SVM:
 ```
@@ -445,36 +446,50 @@ y_pred_svm = svm_model.predict(x_test)
 y_pred_svm_prob = svm_model.predict_proba(x_test)[:, 1]
 ```
 
-#### Evaluating how each model performed and the AUROC score:
+- AUROC Comparison & Observations using confusion matrix
 
-_xgboost model trained with ersilia embeddings_
+  - _xgboost model trained with ersilia embeddings_
 
-AUROC score = 0.7078 and model performance is generally good.
+    - AUROC score: 0.7078 
+    - Model performance is generally good.
 
-_Random forest model trained with fingerprints descriptors_
+  - _Random forest model trained with fingerprints descriptors_
 
-AUROC score = 0.7162 and model classification is not good, misclassified more non-bioavailable compounds as bioavailable.
-_svm model trained with fingerprints descriptor_
+    - AUROC score: 0.7162
+    - Model classification is not good, misclassified more non-bioavailable compounds as bioavailable.
+    
+  - _svm model trained with fingerprints descriptor_
 
-AUROC score = 0.7378 but model classification is poor, misclassified more non-bioavailable compounds as bioavailable and vice versa.
+    - AUROC score: 0.7378
+    - Despite higher AUROC, classification performance was poor, misclassified more non-bioavailable compounds as bioavailable.
+  
+Confusion matrix and visualization results can be found in **/notebooks/model_validation.ipynb**
 
-Confusion matrix and visualization results can be found in /notebooks/model_validation.ipynb
+### Apply models to public dataset
 
-#### Apply models to public dataset
+A new drug molecule dataset, HIA_Hou, was downloaded for prediction using the trained models. This dataset was selected because it also belongs to the ADME task category.
 
-Downloaded a new drug molecules dataset _HIA_Hou_ for prediction using my models because both datasets are for an ADME task:
+- _xgboost model trained with ersilia embeddings_
+  - AUC Score: 0.7975
+  - Classification is fairly better when compared to other two models
 
-_xgboost model trained with ersilia embeddings_ : AUC Score: 0.7975 but classification is fairly better when compared to other two models
+- _Random forest model trained with fingerprints descriptors_ 
+  - AUC Score: 0.8228
+  - Classification is not good, it correctly classified many non-bioavailable compounds but struggled with bioavailable ones.
+  
+_svm model trained with fingerprints descriptor_ 
+  - AUC Score: 0.8688
+  - Classified non-bioavailable compounds very well but misclassified almost all bioavailable ones.
 
-_Random forest model trained with fingerprints descriptors_ : AUC Score: 0.8228, model classification is suboptimal, as it misclassified many non-bioavailable compounds as bioavailable.
-
-_svm model trained with fingerprints descriptor_ : AUC Score: 0.8688 but model exhibited poor classification performance.
+Confusion matrix, AUROC scores and visualization results can be found in **/notebooks/model_validation.ipynb**
 
 ### Conclusion
 
-XGBoost model trained with descriptors using ersilia compound embeddings performed better considering the AUROC score and how well the model classified bioavailables and non bioavailables.
+Among the models tested, the XGBoost model trained with Ersilia compound embeddings stood out, not just in terms of a solid AUROC score, but more importantly in its balanced classification performance across both bioavailable and non-bioavailable compounds. This shows the value of using rich, pretrained molecular representations for ADME-related predictions, where biological activity, chemical and structural properties are crucial.
 
+Although other models like Random Forest and SVM showed higher AUROC scores on datasets, they lacked consistent classification accuracy, especially in distinguishing bioavailable compounds, a key priority for drug development tasks.
 
+This project shows that using the right features for drug data, along with strong machine learning models, can improve predictions. It also highlights the importance of looking beyond just accuracy, especially when the data is imbalanced, like in many biomedical tasks.
 
 
 
